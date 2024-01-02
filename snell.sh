@@ -242,8 +242,8 @@ services:
       - V3=1
       - LISTEN=0.0.0.0:8443  
       - SERVER=127.0.0.1:$PORT_NUMBER
-      - TLS=mp.weixin.qq.com:443
-      - PASSWORD=mp.weixin.qq.com
+      - TLS=coding.net:443
+      - PASSWORD=misaka
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
