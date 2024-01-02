@@ -210,7 +210,7 @@ setup_firewall() {
 }
 
 generate_password() {
-  PASSWORD=$(openssl rand -base64 12) || { echo "Error: Unable to generate password"; exit 1; }
+  PASSWORD=$(openssl rand -base64 18) || { echo "Error: Unable to generate password"; exit 1; }
   echo "Password generated：$PASSWORD"
 }
 
@@ -232,6 +232,18 @@ services:
       - SNELL_URL=$SNELL_URL
     volumes:
       - ./snell-conf/snell.conf:/etc/snell-server.conf
+  shadow-tls:# shadow模块可以删除
+    image: ghcr.io/ihciah/shadow-tls:latest
+    container_name: shadow-tls
+    restart: always
+    network_mode: "host"
+    environment:
+      - MODE=server
+      - V3=1
+      - LISTEN=0.0.0.0:8443   # ipv6的话改成[::]:8443 ，8443不用改动
+      - SERVER=127.0.0.1:$PORT_NUMBER  # ipv6的话改成[::1]:xxx ，xxx是你snell节点的端口 
+      - TLS=mp.weixin.qq.com:443
+      - PASSWORD=$PASSWORD  # 这里是密码，随便改
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
