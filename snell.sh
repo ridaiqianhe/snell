@@ -242,8 +242,9 @@ services:
       - V3=1
       - LISTEN=0.0.0.0:8443  
       - SERVER=127.0.0.1:$PORT_NUMBER
-      - TLS=coding.net:443
+      - TLS=p9-dy.byteimg.com:443
       - PASSWORD=misaka
+      - MONOIO_FORCE_LEGACY_DRIVER=1
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
