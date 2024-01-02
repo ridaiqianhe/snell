@@ -232,7 +232,7 @@ services:
       - SNELL_URL=$SNELL_URL
     volumes:
       - ./snell-conf/snell.conf:/etc/snell-server.conf
-  shadow-tls:# shadow模块可以删除
+  shadow-tls:
     image: ghcr.io/ihciah/shadow-tls:latest
     container_name: shadow-tls
     restart: always
