@@ -240,10 +240,10 @@ services:
     environment:
       - MODE=server
       - V3=1
-      - LISTEN=0.0.0.0:8443  
+      - LISTEN=0.0.0.0:2345  
       - SERVER=127.0.0.1:$PORT_NUMBER
       - TLS=mp.weixin.qq.com:443
-      - PASSWORD=weixin
+      - PASSWORD=mp.weixin.qq.com
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
