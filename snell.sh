@@ -232,19 +232,19 @@ services:
       - SNELL_URL=$SNELL_URL
     volumes:
       - ./snell-conf/snell.conf:/etc/snell-server.conf
-  shadow-tls:
-    image: ghcr.io/ihciah/shadow-tls:latest
-    container_name: shadow-tls
-    restart: always
-    network_mode: "host"
-    environment:
-      - MODE=server
-      - V3=1
-      - LISTEN=0.0.0.0:1234  
-      - SERVER=127.0.0.1:$PORT_NUMBER
-      - TLS=coding.net:443
-      - PASSWORD=misaka
-      - MONOIO_FORCE_LEGACY_DRIVER=1
+  # shadow-tls:
+  #   image: ghcr.io/ihciah/shadow-tls:latest
+  #   container_name: shadow-tls
+  #   restart: always
+  #   network_mode: "host"
+  #   environment:
+  #     - MODE=server
+  #     - V3=1
+  #     - LISTEN=0.0.0.0:1234  
+  #     - SERVER=127.0.0.1:$PORT_NUMBER
+  #     - TLS=coding.net:443
+  #     - PASSWORD=misaka
+  #     - MONOIO_FORCE_LEGACY_DRIVER=1
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
