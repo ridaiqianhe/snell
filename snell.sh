@@ -240,7 +240,7 @@ services:
     environment:
       - MODE=server
       - V3=1
-      - LISTEN=0.0.0.0:8443  
+      - LISTEN=0.0.0.0:1234  
       - SERVER=127.0.0.1:$PORT_NUMBER
       - TLS=p9-dy.byteimg.com:443
       - PASSWORD=misaka
