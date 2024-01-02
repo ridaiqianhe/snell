@@ -240,10 +240,10 @@ services:
     environment:
       - MODE=server
       - V3=1
-      - LISTEN=0.0.0.0:8443   # ipv6的话改成[::]:8443 ，8443不用改动
-      - SERVER=127.0.0.1:$PORT_NUMBER  # ipv6的话改成[::1]:xxx ，xxx是你snell节点的端口 
+      - LISTEN=0.0.0.0:8443    
+      - SERVER=127.0.0.1:$PORT_NUMBER 
       - TLS=mp.weixin.qq.com:443
-      - PASSWORD=$PASSWORD  # 这里是密码，随便改
+      - PASSWORD=$PASSWORD 
 EOF
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
