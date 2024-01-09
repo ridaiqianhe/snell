@@ -196,8 +196,8 @@ select_option() {
     weather-data.apple.com"
     echo "Services that Support TLS1.3:"
     echo "$services_list"
-    read -p "Enter TLS option (e.g., coding.net): " custom_tls
-    custom_tls=${custom_tls:-coding.net}
+    read -p "Enter TLS option (e.g., gateway.icloud.com): " custom_tls
+    custom_tls=${custom_tls:-gateway.icloud.com}
 
     read -p "Enter PASSWORD (e.g., misaka): " custom_password
     custom_password=${custom_password:-misaka}
