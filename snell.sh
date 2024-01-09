@@ -158,7 +158,7 @@ curl -fsSL https://raw.githubusercontent.com/EAlyce/ToolboxScripts/master/Linux.
 
 }
 
-select_option(){
+select_option() {
   ipv6=true
   tfo=false
   read -p "IPv6 (1 for true, 2 for false, press Enter for default true): " ipv6_choice
