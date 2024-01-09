@@ -208,6 +208,7 @@ select_version() {
   echo "Please select the version of Snell："
   echo "1. v3 "
   echo "2. v4 Exclusive to Surge"
+  echo "3. delete All"
   echo "0. 退出脚本"
   read -p "输入选择（回车默认2）: " choice
 
@@ -348,6 +349,16 @@ check_root
 sudo apt-get autoremove -y > /dev/null
 apt-get install sudo > /dev/null
 select_version
+if [ "$choice" -eq 3 ]; then
+  # 停止所有包含"snell"和"shadow-tls"名称的容器
+  docker stop $(docker ps -a | grep -E 'snell|shadow-tls' | awk '{print $1}')
+  
+  # 删除所有包含"snell"和"shadow-tls"名称的容器
+  docker rm $(docker ps -a | grep -E 'snell|shadow-tls' | awk '{print $1}')
+  
+  echo "All snell and shadow-tls containers have been stopped and removed."
+  exit 0
+fi
 select_option
 set_custom_path
 clean_lock_files
