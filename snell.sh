@@ -201,6 +201,7 @@ select_option(){
 
     read -p "Enter PASSWORD (e.g., misaka): " custom_password
     custom_password=${custom_password:-misaka}
+  fi
 }
 
 select_version() {
