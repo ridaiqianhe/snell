@@ -348,6 +348,7 @@ check_root
 sudo apt-get autoremove -y > /dev/null
 apt-get install sudo > /dev/null
 select_version
+select_option
 set_custom_path
 clean_lock_files
 install_tools
