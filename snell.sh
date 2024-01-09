@@ -218,6 +218,7 @@ select_version() {
     0) echo "退出脚本"; exit 0 ;;
     1) BASE_URL="https://github.com/xOS/Others/raw/master/snell"; SUB_PATH="v3.0.1/snell-server-v3.0.1"; VERSION_NUMBER="3" ;;
     2) BASE_URL="https://dl.nssurge.com/snell"; SUB_PATH="snell-server-v4.0.1"; VERSION_NUMBER="4" ;;
+    3) ;;
     *) echo "无效选择"; exit 1 ;;
   esac
 }
