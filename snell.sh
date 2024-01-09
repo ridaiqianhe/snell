@@ -215,6 +215,8 @@ generate_password() {
 }
 
 setup_docker() {
+  read -p "Enter choice (1 for shadow-tls, 2 for no shadow-tls): " choice
+
   NODE_DIR="/root/snelldocker/Snell$PORT_NUMBER"
   
   mkdir -p "$NODE_DIR" || { echo "Error: Unable to create directory $NODE_DIR"; exit 1; }
@@ -232,20 +234,50 @@ services:
       - SNELL_URL=$SNELL_URL
     volumes:
       - ./snell-conf/snell.conf:/etc/snell-server.conf
-  # shadow-tls:
-  #   image: ghcr.io/ihciah/shadow-tls:latest
-  #   container_name: shadow-tls
-  #   restart: always
-  #   network_mode: "host"
-  #   environment:
-  #     - MODE=server
-  #     - V3=1
-  #     - LISTEN=0.0.0.0:1234  
-  #     - SERVER=127.0.0.1:$PORT_NUMBER
-  #     - TLS=coding.net:443
-  #     - PASSWORD=misaka
-  #     - MONOIO_FORCE_LEGACY_DRIVER=1
 EOF
+
+  if [ "$choice" -eq 1 ]; then
+    read -p "Enter custom port (e.g., 1234, press Enter for default 1234): " custom_port
+    custom_port=${custom_port:-1234}
+    services_list="mp.weixin.qq.com
+    coding.net
+    upyun.com
+    sns-video-hw.xhscdn.com
+    sns-img-qc.xhscdn.com
+    sns-video-qn.xhscdn.com
+    p9-dy.byteimg.com
+    p6-dy.byteimg.com
+    feishu.cn
+    douyin.com
+    toutiao.com
+    v6-dy-y.ixigua.com
+    hls3-akm.douyucdn.cn
+    publicassets.cdn-apple.com
+    weather-data.apple.com"
+    echo "Services that Support TLS1.3:"
+    echo "$services_list"
+    read -p "Enter TLS option (e.g., coding.net): " custom_tls
+    custom_tls=${custom_tls:-coding.net}
+
+    read -p "Enter PASSWORD (e.g., misaka): " custom_password
+    custom_password=${custom_password:-misaka}
+
+    cat <<EOF >> docker-compose.yml
+  shadow-tls:
+    image: ghcr.io/ihciah/shadow-tls:latest
+    container_name: shadow-tls
+    restart: always
+    network_mode: "host"
+    environment:
+      - MODE=server
+      - V3=1
+      - LISTEN=0.0.0.0:$custom_port
+      - SERVER=127.0.0.1:$PORT_NUMBER
+      - TLS=$custom_tls:443
+      - PASSWORD=$custom_password
+      - MONOIO_FORCE_LEGACY_DRIVER=1
+EOF
+  fi
 
   mkdir -p ./snell-conf || { echo "Error: Unable to create directory $NODE_DIR/snell-conf"; exit 1; }
   cat <<EOF > ./snell-conf/snell.conf
@@ -261,6 +293,7 @@ EOF
 
   echo "Node setup completed. Here is your node information"
 }
+
 print_node() {
   if [ "$choice" == "1" ]; then
     echo
