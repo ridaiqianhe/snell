@@ -158,6 +158,51 @@ curl -fsSL https://raw.githubusercontent.com/EAlyce/ToolboxScripts/master/Linux.
 
 }
 
+select_option(){
+  ipv6=true
+  tfo=false
+  read -p "IPv6 (1 for true, 2 for false, press Enter for default true): " ipv6_choice
+  ipv6_choice=${ipv6_choice:-1}  
+  read -p "TFO (1 for true, 2 for false, press Enter for default false): " tfo_choice
+  tfo_choice=${tfo_choice:-2}   
+  if [ "$ipv6_choice" -eq 2 ]; then
+    ipv6=false
+  fi
+  if [ "$tfo_choice" -eq 1 ]; then
+    tfo=true
+  fi
+  echo "IPv6 is set to $ipv6"
+  echo "TFO is set to $tfo"
+
+  read -p "Enter tlschoice (1 for shadow-tls, 2 for no shadow-tls): " tlschoice
+  if [ "$tlschoice" -eq 1 ]; then
+    read -p "Enter custom port (e.g., 1234, press Enter for default 1234): " custom_port
+    custom_port=${custom_port:-1234}
+    services_list="
+    mp.weixin.qq.com
+    coding.net
+    upyun.com
+    sns-video-hw.xhscdn.com
+    sns-img-qc.xhscdn.com
+    sns-video-qn.xhscdn.com
+    p9-dy.byteimg.com
+    p6-dy.byteimg.com
+    feishu.cn
+    douyin.com
+    toutiao.com
+    v6-dy-y.ixigua.com
+    hls3-akm.douyucdn.cn
+    publicassets.cdn-apple.com
+    weather-data.apple.com"
+    echo "Services that Support TLS1.3:"
+    echo "$services_list"
+    read -p "Enter TLS option (e.g., coding.net): " custom_tls
+    custom_tls=${custom_tls:-coding.net}
+
+    read -p "Enter PASSWORD (e.g., misaka): " custom_password
+    custom_password=${custom_password:-misaka}
+}
+
 select_version() {
   echo "Please select the version of Snell："
   echo "1. v3 "
@@ -215,7 +260,6 @@ generate_password() {
 }
 
 setup_docker() {
-  read -p "Enter choice (1 for shadow-tls, 2 for no shadow-tls): " choice
 
   NODE_DIR="/root/snelldocker/Snell$PORT_NUMBER"
   
@@ -236,32 +280,8 @@ services:
       - ./snell-conf/snell.conf:/etc/snell-server.conf
 EOF
 
-  if [ "$choice" -eq 1 ]; then
-    read -p "Enter custom port (e.g., 1234, press Enter for default 1234): " custom_port
-    custom_port=${custom_port:-1234}
-    services_list="mp.weixin.qq.com
-    coding.net
-    upyun.com
-    sns-video-hw.xhscdn.com
-    sns-img-qc.xhscdn.com
-    sns-video-qn.xhscdn.com
-    p9-dy.byteimg.com
-    p6-dy.byteimg.com
-    feishu.cn
-    douyin.com
-    toutiao.com
-    v6-dy-y.ixigua.com
-    hls3-akm.douyucdn.cn
-    publicassets.cdn-apple.com
-    weather-data.apple.com"
-    echo "Services that Support TLS1.3:"
-    echo "$services_list"
-    read -p "Enter TLS option (e.g., coding.net): " custom_tls
-    custom_tls=${custom_tls:-coding.net}
-
-    read -p "Enter PASSWORD (e.g., misaka): " custom_password
-    custom_password=${custom_password:-misaka}
-
+  if [ "$tlschoice" -eq 1 ]; then
+    
     cat <<EOF >> docker-compose.yml
   shadow-tls:
     image: ghcr.io/ihciah/shadow-tls:latest
@@ -284,9 +304,9 @@ EOF
 [snell-server]
 listen = 0.0.0.0:$PORT_NUMBER
 psk = $PASSWORD
-tfo = false
+tfo = $tfo_choice
 obfs = off
-ipv6 = false
+ipv6 = $ipv6_choice
 EOF
 
   docker-compose up -d || { echo "Error: Unable to start Docker container"; exit 1; }
@@ -306,12 +326,17 @@ print_node() {
     echo "    version: $VERSION_NUMBER"
     echo "    udp: true"
     echo
-    echo "$LOCATION Snell v$VERSION_NUMBER $PORT_NUMBER = snell, $public_ip, $PORT_NUMBER, psk=$PASSWORD, version=$VERSION_NUMBER"
+    echo "$LOCATION Snell v$VERSION_NUMBER $PORT_NUMBER = snell, $public_ip, $PORT_NUMBER, psk=$PASSWORD, version=$VERSION_NUMBER", reuse=true
     echo
     echo
   elif [ "$choice" == "2" ]; then
     echo
-    echo "$LOCATION Snell v$VERSION_NUMBER $PORT_NUMBER = snell, $public_ip, $PORT_NUMBER, psk=$PASSWORD, version=$VERSION_NUMBER"
+    echo "$LOCATION Snell v$VERSION_NUMBER $PORT_NUMBER = snell, $public_ip, $PORT_NUMBER, psk=$PASSWORD, version=$VERSION_NUMBER", reuse=true
+    echo
+  fi
+  if [ "$tlschoice" == "1" ]; then
+    echo "$LOCATION Snell v$VERSION_NUMBER $PORT_NUMBER (shadow-tlsv3)= snell, $public_ip, $custom_port, psk=$PASSWORD, version=$VERSION_NUMBER", reuse=true, shadow-tls-password=$custom_password, shadow-tls-sni=$custom_tls, shadow-tls-version=3
+    echo
     echo
   fi
 }
