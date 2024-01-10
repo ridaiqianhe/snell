@@ -19,6 +19,11 @@ if ! grep -q '^PATH=' /etc/crontab; then
 fi
 }
 
+print_highlighted() {
+  echo -e "\e[97m$1\e[0m"
+}
+
+
 
 check_root() {
     [ "$(id -u)" != "0" ] && echo "Error: You must be root to run this script" && exit 1
@@ -161,6 +166,30 @@ curl -fsSL https://raw.githubusercontent.com/EAlyce/ToolboxScripts/master/Linux.
 select_option() {
   ipv6=true
   tfo=false
+  echo "Please choose an option for snell:"
+  echo "1. Generate a random port"
+  echo "2. Manually enter a port"
+
+  read -p "Enter your choice (1 or 2): " option
+
+  case $option in
+    1)
+      generate_port
+      print_highlighted "The generated random port is: $PORT_NUMBER"
+      ;;
+    2)
+      read -p "Enter the port number (1-65535): " MANUAL_PORT
+      if ((MANUAL_PORT >= 1 && MANUAL_PORT <= 65535)); then
+        PORT_NUMBER=$MANUAL_PORT
+        print_highlighted "Manually entered port is: $PORT_NUMBER"
+      else
+        echo "Invalid port number. Please enter a value between 1 and 65535."
+      fi
+      ;;
+    *)
+      echo "Invalid option. Please enter 1 or 2."
+      ;;
+  esac
   read -p "IPv6 (1 for true, 2 for false, press Enter for default true): " ipv6_choice
   ipv6_choice=${ipv6_choice:-1}  
   read -p "TFO (1 for true, 2 for false, press Enter for default false): " tfo_choice
@@ -237,15 +266,15 @@ select_architecture() {
 
 generate_port() {
   EXCLUDED_PORTS=(5432 5554 5800 5900 6379 8080 9996)
-
+  
   if ! command -v nc.traditional &> /dev/null; then
     sudo apt-get update
     sudo apt-get install netcat-traditional
   fi
-
+  
   while true; do
     PORT_NUMBER=$(shuf -i 5000-9999 -n 1)
-
+  
     if ! nc.traditional -z 127.0.0.1 "$PORT_NUMBER" && [[ ! " ${EXCLUDED_PORTS[@]} " =~ " ${PORT_NUMBER} " ]]; then
       break
     fi
@@ -350,6 +379,7 @@ check_root
 sudo apt-get autoremove -y > /dev/null
 apt-get install sudo > /dev/null
 select_version
+select_option
 if [ "$choice" -eq 3 ]; then
   # 停止所有包含"snell"和"shadow-tls"名称的容器
   docker stop $(docker ps -a | grep -E 'snell|shadow-tls' | awk '{print $1}')
@@ -360,7 +390,6 @@ if [ "$choice" -eq 3 ]; then
   echo "All snell and shadow-tls containers have been stopped and removed."
   exit 0
 fi
-select_option
 set_custom_path
 clean_lock_files
 install_tools
@@ -369,7 +398,6 @@ get_public_ip
 get_location
 setup_environment
 select_architecture
-generate_port
 setup_firewall
 generate_password
 setup_docker
