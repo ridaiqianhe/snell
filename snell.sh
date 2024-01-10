@@ -379,7 +379,6 @@ check_root
 sudo apt-get autoremove -y > /dev/null
 apt-get install sudo > /dev/null
 select_version
-select_option
 if [ "$choice" -eq 3 ]; then
   # 停止所有包含"snell"和"shadow-tls"名称的容器
   docker stop $(docker ps -a | grep -E 'snell|shadow-tls' | awk '{print $1}')
@@ -390,6 +389,7 @@ if [ "$choice" -eq 3 ]; then
   echo "All snell and shadow-tls containers have been stopped and removed."
   exit 0
 fi
+select_option
 set_custom_path
 clean_lock_files
 install_tools
