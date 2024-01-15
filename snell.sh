@@ -299,7 +299,7 @@ setup_docker() {
   cd "$NODE_DIR" || { echo "Error: Unable to change directory to $NODE_DIR"; exit 1; }
 
   cat <<EOF > docker-compose.yml
-version: "3.3"
+version: "3"
 services:
   snell:
     image: accors/snell:latest
@@ -398,7 +398,7 @@ get_public_ip
 get_location
 setup_environment
 select_architecture
-setup_firewall
+# setup_firewall
 generate_password
 setup_docker
 print_node
