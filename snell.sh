@@ -205,8 +205,8 @@ select_option() {
 
   read -p "Enter tlschoice (1 for shadow-tls, 2 for no shadow-tls): " tlschoice
   if [ "$tlschoice" -eq 1 ]; then
-    read -p "Enter custom port (e.g., 1234, press Enter for default 1234): " custom_port
-    custom_port=${custom_port:-1234}
+    read -p "Enter custom port (e.g., 1234, press Enter for default 2345): " custom_port
+    custom_port=${custom_port:-2345}
     services_list="
     mp.weixin.qq.com
     coding.net
