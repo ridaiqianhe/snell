@@ -166,11 +166,11 @@ curl -fsSL https://raw.githubusercontent.com/EAlyce/ToolboxScripts/master/Linux.
 select_option() {
   ipv6=true
   tfo=false
-  echo "Please choose an option for snell:"
-  echo "1. Generate a random port"
-  echo "2. Manually enter a port"
+  echo "请选择端口为snell:"
+  echo "1. 随机选择端口"
+  echo "2. 自定义一个端口"
 
-  read -p "Enter your choice (1 or 2): " option
+  read -p "输入选项 (1 or 2): " option
 
   case $option in
     1)
@@ -194,19 +194,23 @@ select_option() {
   ipv6_choice=${ipv6_choice:-1}  
   read -p "TFO (1 for true, 2 for false, press Enter for default false): " tfo_choice
   tfo_choice=${tfo_choice:-2}   
-  if [ "$ipv6_choice" -eq 2 ]; then
+  if [ "$ipv6_choice" -eq 1 ]; then
+    ipv6=true
+  else
     ipv6=false
   fi
   if [ "$tfo_choice" -eq 1 ]; then
     tfo=true
+  else
+    ipv6=false
   fi
   echo "IPv6 is set to $ipv6"
   echo "TFO is set to $tfo"
 
   read -p "Enter tlschoice (1 for shadow-tls, 2 for no shadow-tls): " tlschoice
   if [ "$tlschoice" -eq 1 ]; then
-    read -p "Enter custom port (e.g., 1234, press Enter for default 2345): " custom_port
-    custom_port=${custom_port:-2345}
+    read -p "Enter custom port (e.g., 1234, press Enter for default 23333): " custom_port
+    custom_port=${custom_port:-23333}
     services_list="
     mp.weixin.qq.com
     coding.net
@@ -236,7 +240,7 @@ select_option() {
 select_version() {
   echo "Please select the version of Snell："
   echo "1. v3 "
-  echo "2. v4 Exclusive to Surge"
+  echo "2. v4"
   echo "3. delete All"
   echo "0. 退出脚本"
   read -p "输入选择（回车默认2）: " choice
@@ -287,8 +291,8 @@ setup_firewall() {
 }
 
 generate_password() {
-  PASSWORD=$(openssl rand -base64 18) || { echo "Error: Unable to generate password"; exit 1; }
-  echo "Password generated：$PASSWORD"
+  PASSWORD=$(openssl rand -base64 6) || { echo "Error: Unable to generate password"; exit 1; }
+  echo "Password generated:$PASSWORD"
 }
 
 setup_docker() {
